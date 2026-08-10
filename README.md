@@ -55,6 +55,11 @@ git clone https://github.com/wayabovetharim/sharepoint-pdf-opener.git
    ```
    sharepoint-pdf-opener/
    ├── extension/   ◄── select this folder
+   │   ├── icons/
+   │   ├── popup/
+   │   ├── manifest.json
+   │   ├── background.js
+   │   └── ...
    ├── images/
    ├── README.md
    └── LICENSE
