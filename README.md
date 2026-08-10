@@ -68,7 +68,11 @@ Click the extensions puzzle piece icon in the toolbar → pin **"SharePoint PDF 
 
 ### Step 4: Enable Auto-Open (One-Time)
 
-After clicking your first PDF on SharePoint:
+Click the extension icon to confirm it's active — you should see the green status indicator and PDF counter:
+
+![Extension active with counter](images/extension_active.png)
+
+Now click your first PDF on SharePoint. The extension will intercept and download it. Then:
 
 1. Look in Edge's download tray
 2. Click the `⋯` menu on the downloaded PDF
