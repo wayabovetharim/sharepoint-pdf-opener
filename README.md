@@ -75,7 +75,7 @@ Click the extension icon to confirm it's active — you should see the green sta
 Now click your first PDF on SharePoint. The extension will intercept and download it. Then:
 
 1. Look in Edge's download tray
-2. Click the `⋯` menu on the downloaded PDF
+2. Right-click **"Open"** on the downloaded PDF
 3. Select **"Always open with system viewer"**
 
    ![Always open with system viewer](images/always_open_system.png)
