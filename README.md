@@ -9,11 +9,11 @@ No services. No registry entries. No startup items. Just a browser extension tha
 ## How It Works
 
 ```
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  User clicks a   │     │  Content script   │     │  Background.js   │     │  Windows opens   │
-│  PDF link on     │────▶│  intercepts the   │────▶│  downloads via   │────▶│  the file in     │
-│  SharePoint      │     │  click event      │     │  browser auth    │     │  Adobe Acrobat   │
-└──────────────────┘     └──────────────────┘     └──────────────────┘     └──────────────────┘
+┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+│  User clicks a   │      │  Content script   │      │  Background.js   │      │  Windows opens   │
+│  PDF link on     │----->│  intercepts the   │----->│  downloads via   │----->│  the file in     │
+│  SharePoint      │      │  click event      │      │  browser auth    │      │  Adobe Acrobat   │
+└──────────────────┘      └──────────────────┘      └──────────────────┘      └──────────────────┘
 ```
 
 1. **Click** — You click any PDF link on `*.sharepoint.com`
