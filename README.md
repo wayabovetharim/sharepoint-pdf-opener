@@ -34,12 +34,15 @@ No services. No registry entries. No startup items. Just a browser extension tha
 Clone this repository or download as ZIP and extract:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sharepoint-pdf-opener.git
+git clone https://github.com/wayabovetharim/sharepoint-pdf-opener.git
 ```
 
 ### Step 2: Load in Edge
 
 1. Navigate to `edge://extensions`
+
+   ![Edge extensions page](images/manage_extensions.png)
+
 2. Enable **Developer mode**
 
    ![Developer mode toggle](images/developer_mode.png)
@@ -48,13 +51,20 @@ git clone https://github.com/YOUR_USERNAME/sharepoint-pdf-opener.git
 
    ![Load unpacked button](images/load_unpacked.png)
 
-4. Select the `extension` folder from this repository
+4. In the folder picker dialog, navigate to where you cloned/extracted this repository and select the **`extension`** subfolder (not the root repo folder). For example:
+   ```
+   sharepoint-pdf-opener/
+   ├── extension/   ◄── select this folder
+   ├── images/
+   ├── README.md
+   └── LICENSE
+   ```
 
 ### Step 3: Pin the Extension (Optional)
 
-Click the extensions puzzle piece icon → pin **"SharePoint PDF Opener"**
+Click the extensions puzzle piece icon in the toolbar → pin **"SharePoint PDF Opener"**
 
-![Manage extensions](images/manage_extensions.png)
+![Pin the extension](images/pin.png)
 
 ### Step 4: Enable Auto-Open (One-Time)
 
