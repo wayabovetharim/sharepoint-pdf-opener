@@ -133,6 +133,7 @@ This extension works in Google Chrome as well:
 - Click the extension icon and verify the toggle shows "Active"
 - Reload the SharePoint page
 - Check that the URL contains `.sharepoint.com`
+- If you just installed or reinstalled the extension, **close all Edge windows and restart the browser** — Edge may cache stale extension state
 
 **Developer mode warning:**
 - Edge shows a periodic warning about developer mode extensions
