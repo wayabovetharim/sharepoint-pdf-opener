@@ -260,6 +260,47 @@
   let lastProcessedUrl = '';
 
   /**
+   * Navigate to the parent directory in SharePoint's document library view.
+   * Used when a PDF was opened in a new tab (from Excel, email, etc.)
+   * and there's no browser history to go back to.
+   *
+   * @param {URL} u - The current page URL object
+   * @param {string} decodedId - The decoded file path from the 'id' param
+   */
+  function navigateToParentDirectory(u, decodedId) {
+    // Strategy 1: Use the 'parent' query param (SharePoint provides this)
+    const parentParam = u.searchParams.get('parent');
+    if (parentParam) {
+      const parentUrl = new URL(u.origin + u.pathname);
+      parentUrl.searchParams.set('id', decodeURIComponent(parentParam));
+      parentUrl.searchParams.set('p', 'true');
+      parentUrl.searchParams.set('ga', '1');
+      console.log('[SP PDF Opener] Requesting parent directory navigation (from param)');
+      chrome.runtime.sendMessage({ type: 'NAVIGATE_OR_FOCUS_PARENT', url: parentUrl.toString() });
+      return;
+    }
+
+    // Strategy 2: Derive parent by stripping the filename from the id path
+    if (decodedId) {
+      const lastSlash = decodedId.lastIndexOf('/');
+      if (lastSlash > 0) {
+        const parentPath = decodedId.substring(0, lastSlash);
+        const parentUrl = new URL(u.origin + u.pathname);
+        parentUrl.searchParams.set('id', parentPath);
+        parentUrl.searchParams.set('p', 'true');
+        parentUrl.searchParams.set('ga', '1');
+        console.log('[SP PDF Opener] Requesting parent directory navigation (derived)');
+        chrome.runtime.sendMessage({ type: 'NAVIGATE_OR_FOCUS_PARENT', url: parentUrl.toString() });
+        return;
+      }
+    }
+
+    // Strategy 3: Can't determine parent — close the tab
+    console.log('[SP PDF Opener] No parent directory found — closing tab');
+    chrome.runtime.sendMessage({ type: 'CLOSE_TAB' });
+  }
+
+  /**
    * Detect if the current page/URL indicates a PDF is being viewed.
    * Handles multiple SharePoint URL patterns:
    *   1. AllItems.aspx?id=/path/to/file.pdf  (most common — document library inline viewer)
@@ -309,6 +350,9 @@
           setTimeout(() => {
             if (window.history.length > 1) {
               window.history.back();
+            } else {
+              // No history (opened from Excel, email, etc.) — navigate to parent directory
+              navigateToParentDirectory(u, decodedId);
             }
           }, 300);
 
@@ -331,6 +375,8 @@
               });
               if (window.history.length > 1) {
                 window.history.back();
+              } else {
+                chrome.runtime.sendMessage({ type: 'CLOSE_TAB' });
               }
             }
           });
@@ -350,6 +396,8 @@
             });
             if (window.history.length > 1) {
               window.history.back();
+            } else {
+              chrome.runtime.sendMessage({ type: 'CLOSE_TAB' });
             }
           }
         });

@@ -158,6 +158,54 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ status: 'ok' });
       return false;
 
+    case 'CLOSE_TAB':
+      // Close the sender's tab (used when there's no history to go back to)
+      if (sender.tab?.id) {
+        chrome.tabs.remove(sender.tab.id).catch(() => {});
+      }
+      sendResponse({ status: 'ok' });
+      return false;
+
+    case 'NAVIGATE_OR_FOCUS_PARENT':
+      // Navigate to parent directory, or focus an existing tab if already open
+      {
+        const senderTabId = sender.tab?.id;
+        const targetUrl = msg.url;
+        let targetId = null;
+        try {
+          targetId = new URL(targetUrl).searchParams.get('id');
+        } catch { /* ignore */ }
+
+        chrome.tabs.query({ url: '*://*.sharepoint.com/*' }, (tabs) => {
+          // Look for an existing tab showing the same directory
+          const existingTab = tabs.find(tab => {
+            if (tab.id === senderTabId) return false; // skip current tab
+            try {
+              const tabId = new URL(tab.url).searchParams.get('id');
+              return targetId && tabId && tabId === targetId;
+            } catch { return false; }
+          });
+
+          if (existingTab) {
+            // Duplicate found — focus existing tab and close the sender
+            console.log('[SP PDF Opener] Parent directory already open — focusing existing tab');
+            chrome.tabs.update(existingTab.id, { active: true });
+            chrome.windows.update(existingTab.windowId, { focused: true });
+            if (senderTabId) {
+              chrome.tabs.remove(senderTabId).catch(() => {});
+            }
+          } else {
+            // No duplicate — navigate the sender tab to the parent directory
+            console.log('[SP PDF Opener] Navigating to parent directory');
+            if (senderTabId) {
+              chrome.tabs.update(senderTabId, { url: targetUrl });
+            }
+          }
+        });
+      }
+      sendResponse({ status: 'ok' });
+      return false;
+
     case 'OPEN_DOWNLOADS':
       openDownloadsFolder();
       sendResponse({ status: 'ok' });
