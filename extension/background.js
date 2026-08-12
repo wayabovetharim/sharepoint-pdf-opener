@@ -178,6 +178,11 @@ async function handlePdfOpen(url, filename, tabId) {
   const { enabled } = await chrome.storage.local.get({ enabled: true });
   if (!enabled) return;
 
+  // Sanitize the download URL:
+  // - Strip ?web=1 (SharePoint serves HTML viewer instead of PDF binary)
+  // - Ensure ?download=1 is present to force direct file download
+  url = sanitizeDownloadUrl(url);
+
   // Sanitize filename
   const safeName = sanitizeFilename(filename || extractFilenameFromUrl(url));
 
@@ -337,6 +342,25 @@ function extractFilenameFromUrl(url) {
   } catch { /* fall through */ }
 
   return `sharepoint_${Date.now()}.pdf`;
+}
+
+/**
+ * Sanitize a SharePoint URL to ensure it triggers a binary file download.
+ * - Removes 'web=1' param (tells SharePoint to serve the HTML viewer page)
+ * - Ensures 'download=1' param is present (forces direct binary download)
+ */
+function sanitizeDownloadUrl(url) {
+  try {
+    const u = new URL(url);
+    u.searchParams.delete('web');
+    if (!u.searchParams.has('download')) {
+      u.searchParams.set('download', '1');
+    }
+    return u.toString();
+  } catch {
+    // If URL parsing fails, just append download=1
+    return url.includes('?') ? `${url}&download=1` : `${url}?download=1`;
+  }
 }
 
 function sanitizeFilename(name) {
